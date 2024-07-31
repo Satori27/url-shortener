@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  pg:
+    container_name: pg
+    image: postgres:14
+    environment:
+      &pg_env
+      POSTGRES_DB: url-shortener
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - url-shortener-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "url-shortener", "-U", "admin"] 
+      interval: 5s
+      timeout: 1m
+      
+    networks:
+      - url-shortener
+
+  backend:
+    container_name: backend
+    image: satori27/url-shortener:1.0
+    environment:
+      <<: *pg_env
+      POSTGRES_PORT: "5432"
+      POSTGRES_HOST: pg
+      USER: "user"
+      PASSWORD: "password"
+    depends_on:
+      pg:
+        condition: service_healthy
+    ports:
+      - 9346:8083
+    networks:
+      - url-shortener
+
+volumes:
+  url-shortener-pg:
+    name: url-shortener-pg
+
+networks:
+  url-shortener:

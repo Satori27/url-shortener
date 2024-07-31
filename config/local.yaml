@@ -1,0 +1,5 @@
+env: "local"
+http_server: 
+  address: ":8083"
+  timeout: 4s
+  idle_timeout: 60s
