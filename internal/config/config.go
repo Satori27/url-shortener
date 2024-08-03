@@ -78,9 +78,9 @@ func getPGEnv(cfg *Config) {
 func getAdminEnv(cfg *Config) {
 	viper.AutomaticEnv()
 
-	viper.SetDefault("USER", "user")
-	viper.SetDefault("PASSWORD", "password")
+	viper.SetDefault("USER_SHORTENER", "user")
+	viper.SetDefault("PASSWORD_SHORTENER", "password")
 
-	cfg.User = viper.GetString("USER")
-	cfg.Password = viper.GetString("PASSWORD")
+	cfg.User = viper.GetString("USER_SHORTENER")
+	cfg.Password = viper.GetString("PASSWORD_SHORTENER")
 }

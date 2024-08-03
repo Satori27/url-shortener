@@ -7,7 +7,6 @@ import (
 
 	"path"
 	"testing"
-	"url-shortener/internal/config"
 	"url-shortener/internal/http-server/handlers/url/save"
 	"url-shortener/internal/lib/api"
 	"url-shortener/internal/lib/random"
@@ -18,10 +17,9 @@ import (
 )
 
 func TestURLShortener_HappyPath(t *testing.T) {
-	cfg := config.MustLoad()
 	u := url.URL{
 		Scheme: "http",
-		Host:   cfg.Address,
+		Host:   ":8083",
 	}
 
 	e := httpexpect.Default(t, u.String())
@@ -30,7 +28,7 @@ func TestURLShortener_HappyPath(t *testing.T) {
 		URL:   gofakeit.URL(),
 		Alias: random.NewRandomAlias(10),
 	}).
-		WithBasicAuth(cfg.User, "password").
+		WithBasicAuth("user", "password").
 		Expect().
 		Status(http.StatusOK).
 		JSON().
@@ -39,7 +37,6 @@ func TestURLShortener_HappyPath(t *testing.T) {
 }
 
 func TestURLShortener_SaveRedirectRemove(t *testing.T) {
-	cfg := config.MustLoad()
 	testCases := []struct {
 		name  string
 		url   string
@@ -85,7 +82,7 @@ func TestURLShortener_SaveRedirectRemove(t *testing.T) {
 			resp := e.POST("/url").WithJSON(save.Request{
 				URL:   tc.url,
 				Alias: tc.alias,
-			}).WithBasicAuth(cfg.User, "password").Expect().Status(http.StatusOK).JSON().Object()
+			}).WithBasicAuth("user", "password").Expect().Status(http.StatusOK).JSON().Object()
 
 			if tc.error != "" {
 				resp.NotContainsKey("alias")
@@ -108,7 +105,7 @@ func TestURLShortener_SaveRedirectRemove(t *testing.T) {
 
 			ru := url.URL{
 				Scheme: "http",
-				Host:   cfg.Address,
+				Host:   ":8083",
 				Path:   alias,
 			}
 			fmt.Println(ru.String())
@@ -121,7 +118,7 @@ func TestURLShortener_SaveRedirectRemove(t *testing.T) {
 
 			// Remove
 
-			reqDel := e.DELETE("/"+path.Join("url", alias)).WithBasicAuth(cfg.User, cfg.Password).Expect().Status(http.StatusOK).JSON()
+			reqDel := e.DELETE("/"+path.Join("url", alias)).WithBasicAuth("user", "password").Expect().Status(http.StatusOK).JSON()
 			reqDel.String().IsEqual("url deleted")
 		})
 	}

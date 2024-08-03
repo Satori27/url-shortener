@@ -1,14 +1,12 @@
-version: '3'
-
 services:
   pg:
     container_name: pg
     image: postgres:14
     environment:
       &pg_env
-      POSTGRES_DB: url-shortener
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - url-shortener-pg:/var/lib/postgresql/data
     healthcheck:
@@ -26,8 +24,8 @@ services:
       <<: *pg_env
       POSTGRES_PORT: "5432"
       POSTGRES_HOST: pg
-      USER: "user"
-      PASSWORD: "password"
+      USER: ${USER_SHORTENER}
+      PASSWORD: ${PASSWORD_SHORTENER}
     depends_on:
       pg:
         condition: service_healthy
