@@ -11,8 +11,9 @@ services:
       - url-shortener-pg:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-q", "-d", "url-shortener", "-U", "admin"] 
-      interval: 5s
-      timeout: 1m
+      interval: 10s
+      timeout: 5s
+      retries: 5
       
     networks:
       - url-shortener
@@ -40,3 +41,4 @@ volumes:
 
 networks:
   url-shortener:
+
